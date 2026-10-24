@@ -1,0 +1,28 @@
+SCREENSHOTS - STATUS: NOT YET CAPTURED (this is the only pending deliverable)
+
+The AI environment cannot take real screenshots, and fake ones must never be
+created. Please capture these four yourself from a real run of:  python main.py
+
+Save the images in THIS folder using these names:
+
+1. 01_route_listing.png
+   Type:  1  then  n
+   Shows: the five routes with seats and status.
+
+2. 02_successful_booking.png
+   Type:  3  then  Ali Khan , 30 , R101 , 2
+   Shows: "Booking successful!" with ID B1001 and Total fare Rs. 2,400.
+
+3. 03_cancellation.png
+   Type:  5  then  B1001
+   Shows: "Booking B1001 has been cancelled." and seats returned.
+
+4. 04_report_output.png
+   Type:  7
+   Shows: the Booking Report summary.
+   (Best order: do 1 -> 3 -> 5 -> 7 in ONE run so the report includes a
+   cancelled booking.)
+
+How to capture:  Windows: Win+Shift+S   |  Mac: Cmd+Shift+4   |  Linux: PrtSc
+
+When done, tick Step 10 in ../README.md (change "Pending" to "Done").

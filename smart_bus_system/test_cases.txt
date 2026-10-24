@@ -1,0 +1,221 @@
+SMART BUS TICKET BOOKING & RESERVATION SYSTEM - TEST CASES
+===========================================================
+
+How these were run
+------------------
+* Date run   : 24 Oct 2026
+* Python     : 3.13 (standard library only)
+* Method     : each scenario starts a fresh copy of main.py and feeds it scripted
+               keyboard input (see run_tests.py). Output was checked by the script
+               and the key lines below were also read by eye from the real output.
+* Re-run all : python run_tests.py   (prints PASS/FAIL per test, then ALL PASSED)
+* Manual run : python main.py        (type the "Input / action" column by hand)
+* Every test starts from a fresh program (data resets on every start).
+
+Status values: Pass / Fail / Not run.
+Nothing here was marked Pass without being actually executed.
+
+-----------------------------------------------------------------------------
+REQUIRED TEST CASES (from the project requirements, section 10)
+-----------------------------------------------------------------------------
+
+TC-01
+  Scenario        : View all five routes and their seat status.
+  Input / action  : Menu 1 -> "n" (show all routes) -> menu 9.
+  Expected result : R101-R105 listed with seats 40/40, 36/36, 32/32, 45/45, 30/30,
+                    all showing "Available".
+  Actual result   : All five routes listed with exactly those seat counts; each
+                    row showed status "Available".
+  Status          : Pass
+
+TC-02
+  Scenario        : Search "Hyderabad" (departure OR destination).
+  Input / action  : Menu 2 -> "Hyderabad" -> menu 9.
+  Expected result : R101 (arrives), R103 (departs), R105 (arrives). Not R102, R104.
+  Actual result   : Exactly R101, R103 and R105 were shown (route numbers 1, 3, 5).
+                    R102 and R104 were not shown.
+  Status          : Pass
+
+TC-03
+  Scenario        : Search an unknown city.
+  Input / action  : Menu 2 -> "Atlantis" -> menu 9.
+  Expected result : No-match message; program continues to the menu.
+  Actual result   : Printed "No match found for 'atlantis'. Try a route ID like
+                    R101 or a city like Karachi." and the menu appeared again.
+  Status          : Pass
+
+TC-04
+  Scenario        : Book two seats on R101 with valid details.
+  Input / action  : Menu 3 -> name "Ali Khan", age 30, route R101, seats 2.
+                    Then menu 6 -> "n".
+  Expected result : Booking B1001 Confirmed, total fare Rs. 2,400, R101 seats 40 -> 38.
+  Actual result   : "Booking successful!" with Booking ID B1001, Fare per seat
+                    Rs. 1,200, Total fare Rs. 2,400, Status Confirmed.
+                    Seat availability then showed R101 = 38 of 40, "Partially Booked".
+  Status          : Pass
+
+TC-05
+  Scenario        : Attempt to book zero seats.
+  Input / action  : Menu 3 -> "Ali Khan", 30, R101, seats 0. Then menu 4 and menu 6.
+  Expected result : Rejected; no booking record; seats unchanged at 40.
+  Actual result   : Printed "Booking failed: number of seats must be a whole number
+                    greater than 0." View bookings said "No bookings found."
+                    R101 still 40 of 40, "Available".
+  Status          : Pass
+
+TC-06
+  Scenario        : Request more seats than available.
+  Input / action  : Menu 3 -> "Ali Khan", 30, R101, seats 41. Then menu 4 and menu 6.
+  Expected result : Rejected; availability not negative; no booking.
+  Actual result   : Printed "Booking failed: you asked for 41 seat(s) but only 40
+                    are available." No bookings found; R101 still 40 of 40.
+  Status          : Pass
+
+TC-07
+  Scenario        : Cancel a confirmed booking.
+  Input / action  : Book 2 seats on R101 (B1001) -> menu 5 -> B1001 -> menu 4 -> menu 6.
+  Expected result : Status becomes Cancelled; seats restored 38 -> 40; record kept.
+  Actual result   : "Booking B1001 has been cancelled." Seats returned: 2; seats now
+                    40/40. Booking list still showed B1001 with status Cancelled.
+                    R101 back to "Available" (40 of 40).
+  Status          : Pass
+
+TC-08
+  Scenario        : Cancel the same booking again.
+  Input / action  : Book 2 seats (B1001) -> cancel B1001 -> cancel B1001 again -> menu 6.
+  Expected result : Second cancel rejected; seats NOT restored twice (stay 40, not 42).
+  Actual result   : Second attempt printed "Cancellation failed: booking B1001 is
+                    already Cancelled. No seats were changed." R101 stayed 40/40.
+  Status          : Pass
+
+TC-09
+  Scenario        : Generate report with no bookings.
+  Input / action  : Menu 7 -> menu 9 (no bookings made).
+  Expected result : All counts, reserved seats and revenue are zero.
+  Actual result   : Total bookings 0, Confirmed 0, Cancelled 0, Seats currently
+                    reserved 0, Confirmed revenue Rs. 0, Fully booked routes 0.
+  Status          : Pass
+
+TC-10
+  Scenario        : Book exactly all remaining seats.
+  Input / action  : Book 2 seats on R101, then book 38 seats on R101 (the rest),
+                    then menu 6.
+  Expected result : Both bookings succeed; R101 becomes Fully Booked with 0 seats.
+  Actual result   : Both showed "Booking successful!" (second total fare Rs. 45,600).
+                    Seat availability showed R101 = 0 of 40, "Fully Booked".
+  Status          : Pass
+
+TC-11
+  Scenario        : Report after a cancellation; cancelled fare excluded.
+  Input / action  : Book 2 seats R101 (B1001, Rs. 2,400); book 1 seat R102 (B1002,
+                    Rs. 2,000); cancel B1001; menu 7.
+  Expected result : Total 2, Confirmed 1, Cancelled 1, reserved seats 1,
+                    revenue Rs. 2,000 (the cancelled Rs. 2,400 is excluded).
+  Actual result   : Total bookings 2, Confirmed 1, Cancelled 1, Seats currently
+                    reserved 1, Confirmed revenue Rs. 2,000, Fully booked routes 0.
+  Status          : Pass
+
+TC-12
+  Scenario        : Invalid menu text / numbers.
+  Input / action  : At the menu type: abc, 10, 0, (empty Enter), -1, 2.5, then 9.
+  Expected result : Helpful error each time, no crash, menu returns, 9 exits.
+  Actual result   : "abc", empty, "-1" and "2.5" printed "Invalid input: please type
+                    a number from 1 to 9."; "10" and "0" printed "Invalid choice:
+                    please pick a number from 1 to 9." No crash; 9 printed Goodbye.
+  Status          : Pass
+
+-----------------------------------------------------------------------------
+EXTRA TEST CASES (added by the developer to cover the business rules)
+-----------------------------------------------------------------------------
+
+EX-01
+  Scenario        : Whitespace-only passenger name.
+  Input / action  : Menu 3 -> name "   " (spaces).
+  Expected result : Rejected, no crash.
+  Actual result   : "Booking failed: passenger name cannot be empty."
+  Status          : Pass
+
+EX-02
+  Scenario        : Invalid ages (text, zero, negative), three separate attempts.
+  Input / action  : Menu 3 -> name Ali -> age "abc"; repeat with "0"; repeat with "-5".
+  Expected result : Each rejected with a message; no crash.
+  Actual result   : All three printed "Booking failed: age must be a whole number
+                    greater than 0."
+  Status          : Pass
+
+EX-03
+  Scenario        : Route ID that does not exist.
+  Input / action  : Menu 3 -> Ali, 30, route R999 -> menu 4.
+  Expected result : Rejected; no booking created.
+  Actual result   : "Booking failed: route 'R999' does not exist. Use option 1 to
+                    see route IDs." View bookings: "No bookings found."
+  Status          : Pass
+
+EX-04
+  Scenario        : Seat quantity as text or negative.
+  Input / action  : Menu 3 -> Ali, 30, R101, seats "abc"; repeat with seats "-2".
+  Expected result : Both rejected; no booking.
+  Actual result   : Both printed "Booking failed: number of seats must be a whole
+                    number greater than 0." No bookings found.
+  Status          : Pass
+
+EX-05
+  Scenario        : Cancel a booking ID that does not exist / empty ID.
+  Input / action  : Menu 5 -> "B9999"; menu 5 -> (empty Enter).
+  Expected result : Helpful message each time; nothing changes.
+  Actual result   : Both printed "Cancellation failed: no booking with ID ..."
+                    No crash.
+  Status          : Pass
+
+EX-06
+  Scenario        : View bookings when there are none.
+  Input / action  : Menu 4 -> menu 9.
+  Expected result : "No bookings found."
+  Actual result   : "No bookings found." printed.
+  Status          : Pass
+
+EX-07
+  Scenario        : Route schedule by departure city (nested loops).
+  Input / action  : Menu 8 -> menu 9.
+  Expected result : Karachi (3 routes), Hyderabad (1), Sukkur (1); Mirpur Khas and
+                    Lahore show "No scheduled departures."
+  Actual result   : Exactly that: Karachi listed R101, R102, R104; Hyderabad R103;
+                    Sukkur R105; Mirpur Khas and Lahore each printed "No scheduled
+                    departures."
+  Status          : Pass
+
+EX-08
+  Scenario        : Booking IDs are not reused after a cancellation.
+  Input / action  : Book (B1001) -> cancel B1001 -> book again -> menu 4.
+  Expected result : New booking gets B1002; B1001 stays in history as Cancelled.
+  Actual result   : Booking list showed B1001 (Cancelled) and B1002 (Confirmed).
+  Status          : Pass
+
+EX-09
+  Scenario        : "Only routes with seats left" filter skips fully booked routes (continue).
+  Input / action  : Book all 40 seats of R101 -> menu 1 -> "y"; menu 6 -> "y".
+  Expected result : R101 missing from both filtered lists; other routes shown.
+  Actual result   : R101 was absent from both filtered lists.
+  Status          : Pass
+
+EX-10
+  Scenario        : Booking on a Fully Booked route; report counts full routes.
+  Input / action  : Book all 40 seats of R101 -> try to book R101 again -> menu 7.
+  Expected result : Second attempt rejected; report shows 1 fully booked route and
+                    revenue Rs. 48,000.
+  Actual result   : "Booking failed: route R101 is Fully Booked." Report: Fully
+                    booked routes 1, Confirmed revenue Rs. 48,000.
+  Status          : Pass
+
+EX-11
+  Scenario        : Search is case-insensitive and finds multiple matches.
+  Input / action  : Menu 2 -> "r102"; menu 2 -> "KARACHI"; menu 2 -> "lahore".
+  Expected result : "r102" finds R102; "KARACHI" finds R101, R102, R104; "lahore" finds R104.
+  Actual result   : Checked by run_tests.py: R102 shown twice (ID search + Karachi
+                    search), R101 and R104 shown, no crash.
+  Status          : Pass
+
+-----------------------------------------------------------------------------
+SUMMARY: 12 required + 11 extra = 23 tests. 23 Pass, 0 Fail, 0 Not run
+(as of 24 Oct 2026). Re-run with: python run_tests.py
+-----------------------------------------------------------------------------
